@@ -40,6 +40,7 @@ cout<<"    Enter 1 For adding a new Employee   "<<endl;
 cout<<"    Enter 2 For Showing Employee Info  "<<endl;
 cout<<"    Enter 3 for adding new Project     "<<endl;
 cout<<"    Enter 4 for Removing Project     "<<endl;
+cout<<"    Enter 5 for Making on old Projects Ongoing"<<endl;
 cout<<"    Enter 0 for quiting the process     "<<endl;
 }
 
@@ -97,7 +98,8 @@ void addProject(ofstream &projectFile){
     cout<<"Enter Employee Number of Employee :";
     cin>>project.number_of_employee;
     cout<<"Enter Project status:";
-    cin>>project.status;
+    cin.ignore();
+    getline(cin, project.status , '\n');
 
 projectFile<<project.project_Id;;
 projectFile<<" ";
@@ -170,7 +172,7 @@ temp.open("temp.text");
 while(getline(projectFile, line))
 {
     budget = "";
-    int space;
+    int space = 0;
     for(int i = 0; i < line.size(); i++)
     {
         c = line[i];
@@ -203,6 +205,66 @@ rename("temp.text","Project.text");
 
 
 
+//function for changing the status of projects
+void changeStatus(ifstream &projectFile , string minbudget){
+
+char c;
+string budget;
+string line;
+string status = "going";
+string newLine;
+ofstream temp;
+temp.open("temp.text");
+while(getline(projectFile, line))
+{
+    budget = "";
+    int space = 0;
+    for(int i = 0; i < line.size(); i++)
+    {
+        c = line[i];
+
+        if(c == '\t'){ break;}
+
+        else if(c == ' '){
+        space++;
+            if(space==4){
+                if(stoi(budget) <= stoi(minbudget)){
+                 temp << line << endl;
+                       break;
+                                      }
+                        }
+                else if(space==7){
+                    newLine.append(status);
+                    temp<<newLine<<endl;
+                    break;
+                }
+        budget = "";
+
+    }
+            else{
+                 budget += c;
+                 newLine +=c;
+            }
+
+        }
+
+    }
+
+temp.close();
+projectFile.close();
+remove("Project.text");
+rename("temp.text","Project.text");
+
+
+
+
+
+
+
+
+}
+
+
 
 
 
@@ -217,6 +279,7 @@ int main() {
     //Checking if the file is created or not
 
         int i;
+
 
         instruction();
 
@@ -248,6 +311,17 @@ int main() {
             cin>>budget;
             ifstream myfile2 ("Project.text");
             removeProject(myfile2,budget);
+
+
+        }
+        if(i==5){
+                myfile2.close();
+            string budget;
+            cout<<"Enter the budget you want to change the status";
+            cin>>budget;
+          ifstream myfile2 ("Project.text");
+            removeProject(myfile2,budget);
+
 
 
         }
